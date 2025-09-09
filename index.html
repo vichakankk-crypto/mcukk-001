@@ -55,100 +55,100 @@
     <!-- Navigation -->
     <nav class="bg-white shadow-sm border-b border-pink-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center space-x-4">
-                    <div class="w-10 h-10 bg-gradient-to-r from-pink-600 to-rose-600 rounded-lg flex items-center justify-center">
-                        <span class="text-white font-bold text-lg">📊</span>
+            <div class="flex flex-col sm:flex-row justify-between items-center py-3 sm:py-0 sm:h-16">
+                <div class="flex items-center space-x-2 sm:space-x-4 mb-3 sm:mb-0">
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-pink-600 to-rose-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-sm sm:text-lg">📊</span>
                     </div>
-                    <h1 class="text-xl font-semibold text-gray-800">ระบบประเมินพระสอนศีลธรรม</h1>
-                    <div id="firebaseStatus" class="text-xs text-gray-500 flex items-center">
+                    <h1 class="text-lg sm:text-xl font-semibold text-gray-800 text-center sm:text-left">ระบบประเมินพระสอนศีลธรรม</h1>
+                    <div id="firebaseStatus" class="hidden sm:flex text-xs text-gray-500 items-center">
                         <span class="w-2 h-2 bg-yellow-500 rounded-full mr-1 animate-pulse"></span>
                         กำลังเชื่อมต่อ Firebase...
                     </div>
                 </div>
-                <div class="flex space-x-4">
-                    <button onclick="showSection('evaluation')" id="evalBtn" class="px-4 py-2 text-pink-600 bg-pink-50 rounded-lg font-medium transition-colors hover:bg-pink-100">แบบประเมิน</button>
-                    <button onclick="showSection('dashboard')" id="dashBtn" class="px-4 py-2 text-gray-600 hover:text-pink-600 hover:bg-pink-50 rounded-lg font-medium transition-colors">Dashboard</button>
-                    <button onclick="showAdminLogin()" id="adminBtn" class="px-4 py-2 text-gray-600 hover:text-pink-600 hover:bg-pink-50 rounded-lg font-medium transition-colors">ผู้ดูแลระบบ</button>
+                <div class="flex flex-wrap justify-center gap-2 sm:space-x-4">
+                    <button onclick="showSection('evaluation')" id="evalBtn" class="px-3 py-2 sm:px-4 text-sm sm:text-base text-pink-600 bg-pink-50 rounded-lg font-medium transition-colors hover:bg-pink-100">แบบประเมิน</button>
+                    <button onclick="showSection('dashboard')" id="dashBtn" class="px-3 py-2 sm:px-4 text-sm sm:text-base text-gray-600 hover:text-pink-600 hover:bg-pink-50 rounded-lg font-medium transition-colors">Dashboard</button>
+                    <button onclick="showAdminLogin()" id="adminBtn" class="px-3 py-2 sm:px-4 text-sm sm:text-base text-gray-600 hover:text-pink-600 hover:bg-pink-50 rounded-lg font-medium transition-colors">ผู้ดูแลระบบ</button>
                 </div>
             </div>
         </div>
     </nav>
 
     <!-- Evaluation Form Section -->
-    <div id="evaluationSection" class="max-w-4xl mx-auto p-6 fade-in">
+    <div id="evaluationSection" class="max-w-4xl mx-auto p-3 sm:p-6 fade-in">
         <!-- Statistics Boxes -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-4 hover-scale">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-600">การประเมินทั้งหมด</p>
-                        <p class="text-xl font-bold text-pink-600" id="evalTotalEvaluations">0</p>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-3 sm:p-4 hover-scale">
+                <div class="flex flex-col sm:flex-row items-center sm:justify-between">
+                    <div class="text-center sm:text-left mb-2 sm:mb-0">
+                        <p class="text-xs sm:text-sm text-gray-600">การประเมินทั้งหมด</p>
+                        <p class="text-lg sm:text-xl font-bold text-pink-600" id="evalTotalEvaluations">0</p>
                     </div>
-                    <div class="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
-                        <span class="text-pink-600 text-lg">📋</span>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-4 hover-scale">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-600">คะแนนเฉลี่ย</p>
-                        <p class="text-xl font-bold text-green-600" id="evalAverageScore">0.0</p>
-                    </div>
-                    <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                        <span class="text-green-600 text-lg">⭐</span>
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-pink-100 rounded-lg flex items-center justify-center">
+                        <span class="text-pink-600 text-sm sm:text-lg">📋</span>
                     </div>
                 </div>
             </div>
-            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-4 hover-scale">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-600">พระสอนศีลธรรม</p>
-                        <p class="text-xl font-bold text-rose-600" id="evalTotalTeachers">0</p>
+            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-3 sm:p-4 hover-scale">
+                <div class="flex flex-col sm:flex-row items-center sm:justify-between">
+                    <div class="text-center sm:text-left mb-2 sm:mb-0">
+                        <p class="text-xs sm:text-sm text-gray-600">คะแนนเฉลี่ย</p>
+                        <p class="text-lg sm:text-xl font-bold text-green-600" id="evalAverageScore">0.0</p>
                     </div>
-                    <div class="w-10 h-10 bg-rose-100 rounded-lg flex items-center justify-center">
-                        <span class="text-rose-600 text-lg">👨‍🏫</span>
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                        <span class="text-green-600 text-sm sm:text-lg">⭐</span>
                     </div>
                 </div>
             </div>
-            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-4 hover-scale">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-600">สถานศึกษา</p>
-                        <p class="text-xl font-bold text-purple-600" id="evalTotalSchools">0</p>
+            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-3 sm:p-4 hover-scale">
+                <div class="flex flex-col sm:flex-row items-center sm:justify-between">
+                    <div class="text-center sm:text-left mb-2 sm:mb-0">
+                        <p class="text-xs sm:text-sm text-gray-600">พระสอนศีลธรรม</p>
+                        <p class="text-lg sm:text-xl font-bold text-rose-600" id="evalTotalTeachers">0</p>
                     </div>
-                    <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                        <span class="text-purple-600 text-lg">🏫</span>
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-rose-100 rounded-lg flex items-center justify-center">
+                        <span class="text-rose-600 text-sm sm:text-lg">👨‍🏫</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-3 sm:p-4 hover-scale">
+                <div class="flex flex-col sm:flex-row items-center sm:justify-between">
+                    <div class="text-center sm:text-left mb-2 sm:mb-0">
+                        <p class="text-xs sm:text-sm text-gray-600">สถานศึกษา</p>
+                        <p class="text-lg sm:text-xl font-bold text-purple-600" id="evalTotalSchools">0</p>
+                    </div>
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                        <span class="text-purple-600 text-sm sm:text-lg">🏫</span>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Header -->
-        <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-8 mb-6 hover-scale">
-            <div class="text-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-800 mb-2">แบบประเมินการปฏิบัติงานพระสอนศีลธรรมในโรงเรียน</h2>
-                <p class="text-gray-600">มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย วิทยาเขตขอนแก่น</p>
+        <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-4 sm:p-8 mb-4 sm:mb-6 hover-scale">
+            <div class="text-center mb-4 sm:mb-6">
+                <h2 class="text-lg sm:text-2xl font-bold text-gray-800 mb-2">แบบประเมินการปฏิบัติงานพระสอนศีลธรรมในโรงเรียน</h2>
+                <p class="text-sm sm:text-base text-gray-600">มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย วิทยาเขตขอนแก่น</p>
             </div>
             
             <!-- Form Fields -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">ชื่อผู้ประเมิน</label>
-                    <input type="text" id="evaluatorName" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all" placeholder="กรอกชื่อผู้ประเมิน">
+                    <input type="text" id="evaluatorName" class="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all text-sm sm:text-base" placeholder="กรอกชื่อผู้ประเมิน">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">ชื่อพระสอนศีลธรรม</label>
-                    <input type="text" id="teacherName" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all" placeholder="กรอกชื่อพระสอนศีลธรรม">
+                    <input type="text" id="teacherName" class="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all text-sm sm:text-base" placeholder="กรอกชื่อพระสอนศีลธรรม">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">ชื่อสถานศึกษา</label>
-                    <input type="text" id="schoolName" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all" placeholder="กรอกชื่อสถานศึกษา">
+                    <input type="text" id="schoolName" class="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all text-sm sm:text-base" placeholder="กรอกชื่อสถานศึกษา">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">จังหวัด</label>
-                    <select id="province" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all">
+                    <select id="province" class="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all text-sm sm:text-base">
                         <option value="">เลือกจังหวัด</option>
                         <option value="ขอนแก่น">ขอนแก่น</option>
                         <option value="กาฬสินธุ์">กาฬสินธุ์</option>
@@ -156,7 +156,7 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">ภาคเรียนที่</label>
-                    <select id="semester" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all">
+                    <select id="semester" class="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all text-sm sm:text-base">
                         <option value="">เลือกภาคเรียน</option>
                         <option value="1">ภาคเรียนที่ 1</option>
                         <option value="2">ภาคเรียนที่ 2</option>
@@ -164,110 +164,110 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">ปีการศึกษา</label>
-                    <input type="text" id="academicYear" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all" placeholder="เช่น 2567">
+                    <input type="text" id="academicYear" class="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all text-sm sm:text-base" placeholder="เช่น 2567">
                 </div>
             </div>
         </div>
 
         <!-- Scoring Guide -->
-        <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-6 mb-6 hover-scale">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">คำแนะนำการให้คะแนน</h3>
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-                <div class="text-center p-3 bg-green-50 rounded-lg border border-green-200">
-                    <div class="text-2xl font-bold text-green-600 mb-1">5</div>
-                    <div class="text-sm font-medium text-green-800">ดีเยี่ยม</div>
-                    <div class="text-xs text-green-600 mt-1">เกินความคาดหวัง</div>
+        <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-4 sm:p-6 mb-4 sm:mb-6 hover-scale">
+            <h3 class="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">คำแนะนำการให้คะแนน</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-4">
+                <div class="text-center p-2 sm:p-3 bg-green-50 rounded-lg border border-green-200">
+                    <div class="text-xl sm:text-2xl font-bold text-green-600 mb-1">5</div>
+                    <div class="text-xs sm:text-sm font-medium text-green-800">ดีเยี่ยม</div>
+                    <div class="text-xs text-green-600 mt-1 hidden sm:block">เกินความคาดหวัง</div>
                 </div>
-                <div class="text-center p-3 bg-blue-50 rounded-lg border border-blue-200">
-                    <div class="text-2xl font-bold text-blue-600 mb-1">4</div>
-                    <div class="text-sm font-medium text-blue-800">ดี</div>
-                    <div class="text-xs text-blue-600 mt-1">ตามที่คาดหวัง</div>
+                <div class="text-center p-2 sm:p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <div class="text-xl sm:text-2xl font-bold text-blue-600 mb-1">4</div>
+                    <div class="text-xs sm:text-sm font-medium text-blue-800">ดี</div>
+                    <div class="text-xs text-blue-600 mt-1 hidden sm:block">ตามที่คาดหวัง</div>
                 </div>
-                <div class="text-center p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                    <div class="text-2xl font-bold text-yellow-600 mb-1">3</div>
-                    <div class="text-sm font-medium text-yellow-800">พอใช้</div>
-                    <div class="text-xs text-yellow-600 mt-1">ระดับปานกลาง</div>
+                <div class="text-center p-2 sm:p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                    <div class="text-xl sm:text-2xl font-bold text-yellow-600 mb-1">3</div>
+                    <div class="text-xs sm:text-sm font-medium text-yellow-800">พอใช้</div>
+                    <div class="text-xs text-yellow-600 mt-1 hidden sm:block">ระดับปานกลาง</div>
                 </div>
-                <div class="text-center p-3 bg-orange-50 rounded-lg border border-orange-200">
-                    <div class="text-2xl font-bold text-orange-600 mb-1">2</div>
-                    <div class="text-sm font-medium text-orange-800">ควรปรับปรุง</div>
-                    <div class="text-xs text-orange-600 mt-1">ยังควรปรับปรุง</div>
+                <div class="text-center p-2 sm:p-3 bg-orange-50 rounded-lg border border-orange-200">
+                    <div class="text-xl sm:text-2xl font-bold text-orange-600 mb-1">2</div>
+                    <div class="text-xs sm:text-sm font-medium text-orange-800">ควรปรับปรุง</div>
+                    <div class="text-xs text-orange-600 mt-1 hidden sm:block">ยังควรปรับปรุง</div>
                 </div>
-                <div class="text-center p-3 bg-red-50 rounded-lg border border-red-200">
-                    <div class="text-2xl font-bold text-red-600 mb-1">1</div>
-                    <div class="text-sm font-medium text-red-800">ต้องปรับปรุง</div>
-                    <div class="text-xs text-red-600 mt-1">ปรับปรุงเร่งด่วน</div>
+                <div class="text-center p-2 sm:p-3 bg-red-50 rounded-lg border border-red-200">
+                    <div class="text-xl sm:text-2xl font-bold text-red-600 mb-1">1</div>
+                    <div class="text-xs sm:text-sm font-medium text-red-800">ต้องปรับปรุง</div>
+                    <div class="text-xs text-red-600 mt-1 hidden sm:block">ปรับปรุงเร่งด่วน</div>
                 </div>
             </div>
         </div>
 
         <!-- Evaluation Table -->
-        <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-6 mb-6 hover-scale">
-            <h3 class="text-lg font-semibold text-gray-800 mb-6">ภารกิจหลักการปฏิบัติงาน</h3>
-            <div id="evaluationTable" class="space-y-6"></div>
+        <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-4 sm:p-6 mb-4 sm:mb-6 hover-scale">
+            <h3 class="text-base sm:text-lg font-semibold text-gray-800 mb-4 sm:mb-6">ภารกิจหลักการปฏิบัติงาน</h3>
+            <div id="evaluationTable" class="space-y-4 sm:space-y-6"></div>
         </div>
 
         <!-- Suggestions Section -->
-        <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-6 mb-6 hover-scale">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">ข้อเสนอแนะเพิ่มเติม</h3>
-            <div class="space-y-4">
+        <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-4 sm:p-6 mb-4 sm:mb-6 hover-scale">
+            <h3 class="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">ข้อเสนอแนะเพิ่มเติม</h3>
+            <div class="space-y-3 sm:space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">จุดเด่น/สิ่งที่ประทับใจ</label>
-                    <textarea id="strengths" rows="3" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all resize-none" placeholder="กรุณาระบุจุดเด่นหรือสิ่งที่ประทับใจในการปฏิบัติงานของพระสอนศีลธรรม"></textarea>
+                    <textarea id="strengths" rows="3" class="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all resize-none text-sm sm:text-base" placeholder="กรุณาระบุจุดเด่นหรือสิ่งที่ประทับใจในการปฏิบัติงานของพระสอนศีลธรรม"></textarea>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">ข้อเสนอแนะเพื่อการพัฒนา</label>
-                    <textarea id="improvements" rows="3" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all resize-none" placeholder="กรุณาให้ข้อเสนอแนะเพื่อการพัฒนาและปรับปรุงการปฏิบัติงาน"></textarea>
+                    <textarea id="improvements" rows="3" class="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all resize-none text-sm sm:text-base" placeholder="กรุณาให้ข้อเสนอแนะเพื่อการพัฒนาและปรับปรุงการปฏิบัติงาน"></textarea>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">ความต้องการสนับสนุนจากมหาวิทยาลัย</label>
-                    <textarea id="support" rows="3" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all resize-none" placeholder="กรุณาระบุความต้องการสนับสนุนหรือความช่วยเหลือจากมหาวิทยาลัย"></textarea>
+                    <textarea id="support" rows="3" class="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all resize-none text-sm sm:text-base" placeholder="กรุณาระบุความต้องการสนับสนุนหรือความช่วยเหลือจากมหาวิทยาลัย"></textarea>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">ข้อเสนอแนะอื่นๆ</label>
-                    <textarea id="otherSuggestions" rows="3" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all resize-none" placeholder="ข้อเสนอแนะหรือความคิดเห็นอื่นๆ ที่ต้องการแจ้ง"></textarea>
+                    <textarea id="otherSuggestions" rows="3" class="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all resize-none text-sm sm:text-base" placeholder="ข้อเสนอแนะหรือความคิดเห็นอื่นๆ ที่ต้องการแจ้ง"></textarea>
                 </div>
             </div>
         </div>
 
         <!-- Submit Button -->
         <div class="text-center">
-            <button onclick="submitEvaluation()" class="bg-gradient-to-r from-pink-600 to-rose-600 text-white px-8 py-3 rounded-lg font-medium hover:from-pink-700 hover:to-rose-700 transition-all transform hover:scale-105 shadow-lg">
+            <button onclick="submitEvaluation()" class="bg-gradient-to-r from-pink-600 to-rose-600 text-white px-6 py-3 sm:px-8 rounded-lg font-medium hover:from-pink-700 hover:to-rose-700 transition-all transform hover:scale-105 shadow-lg text-sm sm:text-base w-full sm:w-auto">
                 บันทึกการประเมิน
             </button>
         </div>
     </div>
 
     <!-- Admin Section -->
-    <div id="adminSection" class="max-w-6xl mx-auto p-6 hidden fade-in">
-        <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-6 mb-6">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">จัดการข้อมูลระบบ</h2>
+    <div id="adminSection" class="max-w-6xl mx-auto p-3 sm:p-6 hidden fade-in">
+        <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-4 sm:p-6 mb-4 sm:mb-6">
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6">จัดการข้อมูลระบบ</h2>
             
             <!-- Admin Stats -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                <div class="bg-pink-50 rounded-lg p-4 border border-pink-200">
-                    <h3 class="text-lg font-semibold text-pink-800 mb-2">การประเมินทั้งหมด</h3>
-                    <p class="text-2xl font-bold text-pink-600" id="adminTotalEvaluations">0</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-4 sm:mb-6">
+                <div class="bg-pink-50 rounded-lg p-3 sm:p-4 border border-pink-200">
+                    <h3 class="text-base sm:text-lg font-semibold text-pink-800 mb-2">การประเมินทั้งหมด</h3>
+                    <p class="text-xl sm:text-2xl font-bold text-pink-600" id="adminTotalEvaluations">0</p>
                 </div>
-                <div class="bg-rose-50 rounded-lg p-4 border border-rose-200">
-                    <h3 class="text-lg font-semibold text-rose-800 mb-2">พระสอนศีลธรรม</h3>
-                    <p class="text-2xl font-bold text-rose-600" id="adminTotalTeachers">0</p>
+                <div class="bg-rose-50 rounded-lg p-3 sm:p-4 border border-rose-200">
+                    <h3 class="text-base sm:text-lg font-semibold text-rose-800 mb-2">พระสอนศีลธรรม</h3>
+                    <p class="text-xl sm:text-2xl font-bold text-rose-600" id="adminTotalTeachers">0</p>
                 </div>
-                <div class="bg-purple-50 rounded-lg p-4 border border-purple-200">
-                    <h3 class="text-lg font-semibold text-purple-800 mb-2">สถานศึกษา</h3>
-                    <p class="text-2xl font-bold text-purple-600" id="adminTotalSchools">0</p>
+                <div class="bg-purple-50 rounded-lg p-3 sm:p-4 border border-purple-200">
+                    <h3 class="text-base sm:text-lg font-semibold text-purple-800 mb-2">สถานศึกษา</h3>
+                    <p class="text-xl sm:text-2xl font-bold text-purple-600" id="adminTotalSchools">0</p>
                 </div>
             </div>
 
             <!-- Data Management -->
-            <div class="bg-gray-50 rounded-lg p-6">
-                <h3 class="text-lg font-semibold text-gray-800 mb-4">รายการข้อมูลการประเมิน</h3>
-                <div class="mb-4 flex justify-between items-center">
-                    <div class="flex space-x-2">
-                        <button onclick="refreshAdminData()" class="bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700 transition-colors">
+            <div class="bg-gray-50 rounded-lg p-3 sm:p-6">
+                <h3 class="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">รายการข้อมูลการประเมิน</h3>
+                <div class="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <button onclick="refreshAdminData()" class="bg-pink-600 text-white px-3 py-2 sm:px-4 rounded-lg hover:bg-pink-700 transition-colors text-sm">
                             🔄 รีเฟรชข้อมูล
                         </button>
-                        <button onclick="clearAllData()" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
+                        <button onclick="clearAllData()" class="bg-red-600 text-white px-3 py-2 sm:px-4 rounded-lg hover:bg-red-700 transition-colors text-sm">
                             🗑️ ลบข้อมูลทั้งหมด
                         </button>
                     </div>
@@ -277,19 +277,19 @@
                 </div>
                 
                 <div id="adminDataTable" class="overflow-x-auto">
-                    <table class="w-full text-sm">
+                    <table class="w-full text-xs sm:text-sm">
                         <thead class="bg-gray-100">
                             <tr>
-                                <th class="px-4 py-2 text-left">ลำดับ</th>
-                                <th class="px-4 py-2 text-left">ผู้ประเมิน</th>
-                                <th class="px-4 py-2 text-left">พระสอนศีลธรรม</th>
-                                <th class="px-4 py-2 text-left">สถานศึกษา</th>
-                                <th class="px-4 py-2 text-left">จังหวัด</th>
-                                <th class="px-4 py-2 text-left">ภาคเรียน</th>
-                                <th class="px-4 py-2 text-left">ปีการศึกษา</th>
-                                <th class="px-4 py-2 text-left">คะแนนเฉลี่ย</th>
-                                <th class="px-4 py-2 text-left">วันที่ประเมิน</th>
-                                <th class="px-4 py-2 text-left">จัดการ</th>
+                                <th class="px-2 sm:px-4 py-2 text-left">ลำดับ</th>
+                                <th class="px-2 sm:px-4 py-2 text-left">ผู้ประเมิน</th>
+                                <th class="px-2 sm:px-4 py-2 text-left">พระสอนศีลธรรม</th>
+                                <th class="px-2 sm:px-4 py-2 text-left hidden sm:table-cell">สถานศึกษา</th>
+                                <th class="px-2 sm:px-4 py-2 text-left hidden md:table-cell">จังหวัด</th>
+                                <th class="px-2 sm:px-4 py-2 text-left hidden lg:table-cell">ภาคเรียน</th>
+                                <th class="px-2 sm:px-4 py-2 text-left hidden lg:table-cell">ปีการศึกษา</th>
+                                <th class="px-2 sm:px-4 py-2 text-left">คะแนนเฉลี่ย</th>
+                                <th class="px-2 sm:px-4 py-2 text-left hidden sm:table-cell">วันที่ประเมิน</th>
+                                <th class="px-2 sm:px-4 py-2 text-left">จัดการ</th>
                             </tr>
                         </thead>
                         <tbody id="adminTableBody">
@@ -317,86 +317,90 @@
     </div>
 
     <!-- Dashboard Section -->
-    <div id="dashboardSection" class="max-w-6xl mx-auto p-6 hidden fade-in">
-        <div class="mb-6">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">Dashboard ภาพรวมการประเมิน</h2>
+    <div id="dashboardSection" class="max-w-6xl mx-auto p-3 sm:p-6 hidden fade-in">
+        <div class="mb-4 sm:mb-6">
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-800 mb-3 sm:mb-4">Dashboard ภาพรวมการประเมิน</h2>
             
             <!-- Filters -->
-            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-6 mb-6">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <select id="filterProvince" class="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500">
+            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-4 sm:p-6 mb-4 sm:mb-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                    <select id="filterProvince" class="px-3 py-2 sm:px-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 text-sm sm:text-base">
                         <option value="">ทุกจังหวัด</option>
                         <option value="ขอนแก่น">ขอนแก่น</option>
                         <option value="กาฬสินธุ์">กาฬสินธุ์</option>
                     </select>
-                    <select id="filterSemester" class="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500">
+                    <select id="filterSemester" class="px-3 py-2 sm:px-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 text-sm sm:text-base">
                         <option value="">ทุกภาคเรียน</option>
                         <option value="1">ภาคเรียนที่ 1</option>
                         <option value="2">ภาคเรียนที่ 2</option>
                     </select>
-                    <input type="text" id="filterYear" placeholder="ปีการศึกษา" class="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500">
-                    <button onclick="applyFilters()" class="bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700 transition-colors">กรองข้อมูล</button>
+                    <input type="text" id="filterYear" placeholder="ปีการศึกษา" class="px-3 py-2 sm:px-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 text-sm sm:text-base">
+                    <button onclick="applyFilters()" class="bg-pink-600 text-white px-3 py-2 sm:px-4 rounded-lg hover:bg-pink-700 transition-colors text-sm sm:text-base">กรองข้อมูล</button>
                 </div>
             </div>
         </div>
 
         <!-- Summary Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-6 hover-scale">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-600">จำนวนการประเมินทั้งหมด</p>
-                        <p class="text-2xl font-bold text-gray-800" id="totalEvaluations">0</p>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-4 sm:mb-6">
+            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-3 sm:p-6 hover-scale">
+                <div class="flex flex-col sm:flex-row items-center sm:justify-between">
+                    <div class="text-center sm:text-left mb-2 sm:mb-0">
+                        <p class="text-xs sm:text-sm text-gray-600">จำนวนการประเมินทั้งหมด</p>
+                        <p class="text-lg sm:text-2xl font-bold text-gray-800" id="totalEvaluations">0</p>
                     </div>
-                    <div class="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center">
-                        <span class="text-pink-600 text-xl">📋</span>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-6 hover-scale">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-600">คะแนนเฉลี่ยรวม</p>
-                        <p class="text-2xl font-bold text-green-600" id="averageScore">0.0</p>
-                    </div>
-                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                        <span class="text-green-600 text-xl">⭐</span>
+                    <div class="w-8 h-8 sm:w-12 sm:h-12 bg-pink-100 rounded-lg flex items-center justify-center">
+                        <span class="text-pink-600 text-sm sm:text-xl">📋</span>
                     </div>
                 </div>
             </div>
-            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-6 hover-scale">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-600">จำนวนพระสอนศีลธรรม</p>
-                        <p class="text-2xl font-bold text-rose-600" id="totalTeachers">0</p>
+            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-3 sm:p-6 hover-scale">
+                <div class="flex flex-col sm:flex-row items-center sm:justify-between">
+                    <div class="text-center sm:text-left mb-2 sm:mb-0">
+                        <p class="text-xs sm:text-sm text-gray-600">คะแนนเฉลี่ยรวม</p>
+                        <p class="text-lg sm:text-2xl font-bold text-green-600" id="averageScore">0.0</p>
                     </div>
-                    <div class="w-12 h-12 bg-rose-100 rounded-lg flex items-center justify-center">
-                        <span class="text-rose-600 text-xl">👨‍🏫</span>
+                    <div class="w-8 h-8 sm:w-12 sm:h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                        <span class="text-green-600 text-sm sm:text-xl">⭐</span>
                     </div>
                 </div>
             </div>
-            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-6 hover-scale">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-600">จำนวนสถานศึกษา</p>
-                        <p class="text-2xl font-bold text-purple-600" id="totalSchools">0</p>
+            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-3 sm:p-6 hover-scale">
+                <div class="flex flex-col sm:flex-row items-center sm:justify-between">
+                    <div class="text-center sm:text-left mb-2 sm:mb-0">
+                        <p class="text-xs sm:text-sm text-gray-600">จำนวนพระสอนศีลธรรม</p>
+                        <p class="text-lg sm:text-2xl font-bold text-rose-600" id="totalTeachers">0</p>
                     </div>
-                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                        <span class="text-purple-600 text-xl">🏫</span>
+                    <div class="w-8 h-8 sm:w-12 sm:h-12 bg-rose-100 rounded-lg flex items-center justify-center">
+                        <span class="text-rose-600 text-sm sm:text-xl">👨‍🏫</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-3 sm:p-6 hover-scale">
+                <div class="flex flex-col sm:flex-row items-center sm:justify-between">
+                    <div class="text-center sm:text-left mb-2 sm:mb-0">
+                        <p class="text-xs sm:text-sm text-gray-600">จำนวนสถานศึกษา</p>
+                        <p class="text-lg sm:text-2xl font-bold text-purple-600" id="totalSchools">0</p>
+                    </div>
+                    <div class="w-8 h-8 sm:w-12 sm:h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                        <span class="text-purple-600 text-sm sm:text-xl">🏫</span>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Charts -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-6 hover-scale">
-                <h3 class="text-lg font-semibold text-gray-800 mb-4">คะแนนเฉลี่ยรายภารกิจ</h3>
-                <canvas id="missionChart" width="400" height="300"></canvas>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
+            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-4 sm:p-6 hover-scale">
+                <h3 class="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">คะแนนเฉลี่ยรายภารกิจ</h3>
+                <div class="relative h-64 sm:h-80">
+                    <canvas id="missionChart" class="w-full h-full"></canvas>
+                </div>
             </div>
-            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-6 hover-scale">
-                <h3 class="text-lg font-semibold text-gray-800 mb-4">การกระจายคะแนน</h3>
-                <canvas id="distributionChart" width="400" height="300"></canvas>
+            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-4 sm:p-6 hover-scale">
+                <h3 class="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">การกระจายคะแนน</h3>
+                <div class="relative h-64 sm:h-80">
+                    <canvas id="distributionChart" class="w-full h-full"></canvas>
+                </div>
             </div>
         </div>
 
@@ -647,13 +651,13 @@
 
                 mission.items.forEach((item, itemIndex) => {
                     missionHTML += `
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-gray-50 rounded-lg gap-3">
                             <span class="text-sm text-gray-700 flex-1">${missionIndex + 1}.${itemIndex + 1} ${item}</span>
-                            <div class="flex space-x-2 ml-4">
+                            <div class="flex justify-center sm:justify-end space-x-1 sm:space-x-2">
                                 ${[1,2,3,4,5].map(score => `
                                     <label class="flex items-center">
                                         <input type="radio" name="score_${missionIndex}_${itemIndex}" value="${score}" class="sr-only">
-                                        <div class="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center cursor-pointer hover:border-pink-500 transition-colors score-radio" data-score="${score}">
+                                        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 border-gray-300 flex items-center justify-center cursor-pointer hover:border-pink-500 transition-colors score-radio" data-score="${score}">
                                             <span class="text-xs font-medium text-gray-600">${score}</span>
                                         </div>
                                     </label>
@@ -1000,17 +1004,17 @@
                 const row = document.createElement('tr');
                 row.className = 'border-b hover:bg-gray-50';
                 row.innerHTML = `
-                    <td class="px-4 py-2">${index + 1}</td>
-                    <td class="px-4 py-2">${evaluation.evaluatorName || '-'}</td>
-                    <td class="px-4 py-2">${evaluation.teacherName}</td>
-                    <td class="px-4 py-2">${evaluation.schoolName}</td>
-                    <td class="px-4 py-2">${evaluation.province}</td>
-                    <td class="px-4 py-2">ภาคเรียนที่ ${evaluation.semester}</td>
-                    <td class="px-4 py-2">${evaluation.academicYear}</td>
-                    <td class="px-4 py-2">${average}</td>
-                    <td class="px-4 py-2">${evaluation.date}</td>
-                    <td class="px-4 py-2">
-                        <button onclick="deleteEvaluation(${evaluation.id})" class="bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600">
+                    <td class="px-2 sm:px-4 py-2">${index + 1}</td>
+                    <td class="px-2 sm:px-4 py-2">${evaluation.evaluatorName || '-'}</td>
+                    <td class="px-2 sm:px-4 py-2">${evaluation.teacherName}</td>
+                    <td class="px-2 sm:px-4 py-2 hidden sm:table-cell">${evaluation.schoolName}</td>
+                    <td class="px-2 sm:px-4 py-2 hidden md:table-cell">${evaluation.province}</td>
+                    <td class="px-2 sm:px-4 py-2 hidden lg:table-cell">ภาคเรียนที่ ${evaluation.semester}</td>
+                    <td class="px-2 sm:px-4 py-2 hidden lg:table-cell">${evaluation.academicYear}</td>
+                    <td class="px-2 sm:px-4 py-2">${average}</td>
+                    <td class="px-2 sm:px-4 py-2 hidden sm:table-cell">${evaluation.date}</td>
+                    <td class="px-2 sm:px-4 py-2">
+                        <button onclick="deleteEvaluation(${evaluation.id})" class="bg-red-500 text-white px-1 py-1 sm:px-2 rounded text-xs hover:bg-red-600">
                             ลบ
                         </button>
                     </td>
@@ -1393,5 +1397,5 @@
             }
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97c4d4d6158ca1c3',t:'MTc1NzQwMTQ2NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97c505c8e5fca1c3',t:'MTc1NzQwMzQ3MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
