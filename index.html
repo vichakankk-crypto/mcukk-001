@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบประเมินการปฏิบัติงานพระสอนศีลธรรมในโรงเรียน</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Firebase v11+ SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js';
+        import { getDatabase, ref, push, set, get, remove, onValue } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js';
+        
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBDJGWms4rjLvgR-MoJGNDWshilhP9trfI",
+            authDomain: "mcukk-c2fd6.firebaseapp.com",
+            databaseURL: "https://mcukk-c2fd6-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "mcukk-c2fd6",
+            storageBucket: "mcukk-c2fd6.firebasestorage.app",
+            messagingSenderId: "676401548006",
+            appId: "1:676401548006:web:da9f72c2cb46ee069a0927"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        
+        // Make Firebase functions available globally
+        window.firebaseDB = {
+            database,
+            ref,
+            push,
+            set,
+            get,
+            remove,
+            onValue
+        };
+        
+        // Initialize app after Firebase is ready
+        window.initializeFirebaseApp();
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Sarabun', sans-serif; }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .hover-scale { transition: transform 0.2s; }
+        .hover-scale:hover { transform: scale(1.02); }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-pink-50 to-rose-100 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b border-pink-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 bg-gradient-to-r from-pink-600 to-rose-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-lg">📊</span>
+                    </div>
+                    <h1 class="text-xl font-semibold text-gray-800">ระบบประเมินพระสอนศีลธรรม</h1>
+                    <div id="firebaseStatus" class="text-xs text-gray-500 flex items-center">
+                        <span class="w-2 h-2 bg-yellow-500 rounded-full mr-1 animate-pulse"></span>
+                        กำลังเชื่อมต่อ Firebase...
+                    </div>
+                </div>
+                <div class="flex space-x-4">
+                    <button onclick="showSection('evaluation')" id="evalBtn" class="px-4 py-2 text-pink-600 bg-pink-50 rounded-lg font-medium transition-colors hover:bg-pink-100">แบบประเมิน</button>
+                    <button onclick="showSection('dashboard')" id="dashBtn" class="px-4 py-2 text-gray-600 hover:text-pink-600 hover:bg-pink-50 rounded-lg font-medium transition-colors">Dashboard</button>
+                    <button onclick="showAdminLogin()" id="adminBtn" class="px-4 py-2 text-gray-600 hover:text-pink-600 hover:bg-pink-50 rounded-lg font-medium transition-colors">ผู้ดูแลระบบ</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Evaluation Form Section -->
+    <div id="evaluationSection" class="max-w-4xl mx-auto p-6 fade-in">
+        <!-- Statistics Boxes -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-4 hover-scale">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600">การประเมินทั้งหมด</p>
+                        <p class="text-xl font-bold text-pink-600" id="evalTotalEvaluations">0</p>
+                    </div>
+                    <div class="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
+                        <span class="text-pink-600 text-lg">📋</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-4 hover-scale">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600">คะแนนเฉลี่ย</p>
+                        <p class="text-xl font-bold text-green-600" id="evalAverageScore">0.0</p>
+                    </div>
+                    <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                        <span class="text-green-600 text-lg">⭐</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-4 hover-scale">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600">พระสอนศีลธรรม</p>
+                        <p class="text-xl font-bold text-rose-600" id="evalTotalTeachers">0</p>
+                    </div>
+                    <div class="w-10 h-10 bg-rose-100 rounded-lg flex items-center justify-center">
+                        <span class="text-rose-600 text-lg">👨‍🏫</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-4 hover-scale">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600">สถานศึกษา</p>
+                        <p class="text-xl font-bold text-purple-600" id="evalTotalSchools">0</p>
+                    </div>
+                    <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                        <span class="text-purple-600 text-lg">🏫</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-8 mb-6 hover-scale">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">แบบประเมินการปฏิบัติงานพระสอนศีลธรรมในโรงเรียน</h2>
+                <p class="text-gray-600">มหาวิทยาลัยมหาจุฬาลงกรณราชวิทยาลัย วิทยาเขตขอนแก่น</p>
+            </div>
+            
+            <!-- Form Fields -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">ชื่อผู้ประเมิน</label>
+                    <input type="text" id="evaluatorName" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all" placeholder="กรอกชื่อผู้ประเมิน">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">ชื่อพระสอนศีลธรรม</label>
+                    <input type="text" id="teacherName" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all" placeholder="กรอกชื่อพระสอนศีลธรรม">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">ชื่อสถานศึกษา</label>
+                    <input type="text" id="schoolName" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all" placeholder="กรอกชื่อสถานศึกษา">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">จังหวัด</label>
+                    <select id="province" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all">
+                        <option value="">เลือกจังหวัด</option>
+                        <option value="ขอนแก่น">ขอนแก่น</option>
+                        <option value="กาฬสินธุ์">กาฬสินธุ์</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">ภาคเรียนที่</label>
+                    <select id="semester" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all">
+                        <option value="">เลือกภาคเรียน</option>
+                        <option value="1">ภาคเรียนที่ 1</option>
+                        <option value="2">ภาคเรียนที่ 2</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">ปีการศึกษา</label>
+                    <input type="text" id="academicYear" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all" placeholder="เช่น 2567">
+                </div>
+            </div>
+        </div>
+
+        <!-- Scoring Guide -->
+        <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-6 mb-6 hover-scale">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">คำแนะนำการให้คะแนน</h3>
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <div class="text-center p-3 bg-green-50 rounded-lg border border-green-200">
+                    <div class="text-2xl font-bold text-green-600 mb-1">5</div>
+                    <div class="text-sm font-medium text-green-800">ดีเยี่ยม</div>
+                    <div class="text-xs text-green-600 mt-1">เกินความคาดหวัง</div>
+                </div>
+                <div class="text-center p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <div class="text-2xl font-bold text-blue-600 mb-1">4</div>
+                    <div class="text-sm font-medium text-blue-800">ดี</div>
+                    <div class="text-xs text-blue-600 mt-1">ตามที่คาดหวัง</div>
+                </div>
+                <div class="text-center p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                    <div class="text-2xl font-bold text-yellow-600 mb-1">3</div>
+                    <div class="text-sm font-medium text-yellow-800">พอใช้</div>
+                    <div class="text-xs text-yellow-600 mt-1">ระดับปานกลาง</div>
+                </div>
+                <div class="text-center p-3 bg-orange-50 rounded-lg border border-orange-200">
+                    <div class="text-2xl font-bold text-orange-600 mb-1">2</div>
+                    <div class="text-sm font-medium text-orange-800">ควรปรับปรุง</div>
+                    <div class="text-xs text-orange-600 mt-1">ยังควรปรับปรุง</div>
+                </div>
+                <div class="text-center p-3 bg-red-50 rounded-lg border border-red-200">
+                    <div class="text-2xl font-bold text-red-600 mb-1">1</div>
+                    <div class="text-sm font-medium text-red-800">ต้องปรับปรุง</div>
+                    <div class="text-xs text-red-600 mt-1">ปรับปรุงเร่งด่วน</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Evaluation Table -->
+        <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-6 mb-6 hover-scale">
+            <h3 class="text-lg font-semibold text-gray-800 mb-6">ภารกิจหลักการปฏิบัติงาน</h3>
+            <div id="evaluationTable" class="space-y-6"></div>
+        </div>
+
+        <!-- Suggestions Section -->
+        <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-6 mb-6 hover-scale">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">ข้อเสนอแนะเพิ่มเติม</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">จุดเด่น/สิ่งที่ประทับใจ</label>
+                    <textarea id="strengths" rows="3" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all resize-none" placeholder="กรุณาระบุจุดเด่นหรือสิ่งที่ประทับใจในการปฏิบัติงานของพระสอนศีลธรรม"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">ข้อเสนอแนะเพื่อการพัฒนา</label>
+                    <textarea id="improvements" rows="3" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all resize-none" placeholder="กรุณาให้ข้อเสนอแนะเพื่อการพัฒนาและปรับปรุงการปฏิบัติงาน"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">ความต้องการสนับสนุนจากมหาวิทยาลัย</label>
+                    <textarea id="support" rows="3" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all resize-none" placeholder="กรุณาระบุความต้องการสนับสนุนหรือความช่วยเหลือจากมหาวิทยาลัย"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">ข้อเสนอแนะอื่นๆ</label>
+                    <textarea id="otherSuggestions" rows="3" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all resize-none" placeholder="ข้อเสนอแนะหรือความคิดเห็นอื่นๆ ที่ต้องการแจ้ง"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center">
+            <button onclick="submitEvaluation()" class="bg-gradient-to-r from-pink-600 to-rose-600 text-white px-8 py-3 rounded-lg font-medium hover:from-pink-700 hover:to-rose-700 transition-all transform hover:scale-105 shadow-lg">
+                บันทึกการประเมิน
+            </button>
+        </div>
+    </div>
+
+    <!-- Admin Section -->
+    <div id="adminSection" class="max-w-6xl mx-auto p-6 hidden fade-in">
+        <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-6 mb-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">จัดการข้อมูลระบบ</h2>
+            
+            <!-- Admin Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div class="bg-pink-50 rounded-lg p-4 border border-pink-200">
+                    <h3 class="text-lg font-semibold text-pink-800 mb-2">การประเมินทั้งหมด</h3>
+                    <p class="text-2xl font-bold text-pink-600" id="adminTotalEvaluations">0</p>
+                </div>
+                <div class="bg-rose-50 rounded-lg p-4 border border-rose-200">
+                    <h3 class="text-lg font-semibold text-rose-800 mb-2">พระสอนศีลธรรม</h3>
+                    <p class="text-2xl font-bold text-rose-600" id="adminTotalTeachers">0</p>
+                </div>
+                <div class="bg-purple-50 rounded-lg p-4 border border-purple-200">
+                    <h3 class="text-lg font-semibold text-purple-800 mb-2">สถานศึกษา</h3>
+                    <p class="text-2xl font-bold text-purple-600" id="adminTotalSchools">0</p>
+                </div>
+            </div>
+
+            <!-- Data Management -->
+            <div class="bg-gray-50 rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">รายการข้อมูลการประเมิน</h3>
+                <div class="mb-4 flex justify-between items-center">
+                    <div class="flex space-x-2">
+                        <button onclick="refreshAdminData()" class="bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700 transition-colors">
+                            🔄 รีเฟรชข้อมูล
+                        </button>
+                        <button onclick="clearAllData()" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
+                            🗑️ ลบข้อมูลทั้งหมด
+                        </button>
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        ข้อมูลทั้งหมด: <span id="dataCount">0</span> รายการ
+                    </div>
+                </div>
+                
+                <div id="adminDataTable" class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-4 py-2 text-left">ลำดับ</th>
+                                <th class="px-4 py-2 text-left">ผู้ประเมิน</th>
+                                <th class="px-4 py-2 text-left">พระสอนศีลธรรม</th>
+                                <th class="px-4 py-2 text-left">สถานศึกษา</th>
+                                <th class="px-4 py-2 text-left">จังหวัด</th>
+                                <th class="px-4 py-2 text-left">ภาคเรียน</th>
+                                <th class="px-4 py-2 text-left">ปีการศึกษา</th>
+                                <th class="px-4 py-2 text-left">คะแนนเฉลี่ย</th>
+                                <th class="px-4 py-2 text-left">วันที่ประเมิน</th>
+                                <th class="px-4 py-2 text-left">จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Suggestions Section -->
+        <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">รายละเอียดข้อเสนอแนะทั้งหมด</h3>
+            <div class="mb-4">
+                <button onclick="toggleSuggestionsView()" id="toggleSuggestionsBtn" class="bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700 transition-colors">
+                    📝 แสดงข้อเสนอแนะ
+                </button>
+            </div>
+            
+            <div id="suggestionsDetailView" class="hidden">
+                <div class="space-y-6" id="suggestionsContainer">
+                    <p class="text-gray-500 italic text-center py-8">ยังไม่มีข้อเสนอแนะ</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Section -->
+    <div id="dashboardSection" class="max-w-6xl mx-auto p-6 hidden fade-in">
+        <div class="mb-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Dashboard ภาพรวมการประเมิน</h2>
+            
+            <!-- Filters -->
+            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-6 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <select id="filterProvince" class="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500">
+                        <option value="">ทุกจังหวัด</option>
+                        <option value="ขอนแก่น">ขอนแก่น</option>
+                        <option value="กาฬสินธุ์">กาฬสินธุ์</option>
+                    </select>
+                    <select id="filterSemester" class="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500">
+                        <option value="">ทุกภาคเรียน</option>
+                        <option value="1">ภาคเรียนที่ 1</option>
+                        <option value="2">ภาคเรียนที่ 2</option>
+                    </select>
+                    <input type="text" id="filterYear" placeholder="ปีการศึกษา" class="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500">
+                    <button onclick="applyFilters()" class="bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700 transition-colors">กรองข้อมูล</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-6 hover-scale">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600">จำนวนการประเมินทั้งหมด</p>
+                        <p class="text-2xl font-bold text-gray-800" id="totalEvaluations">0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center">
+                        <span class="text-pink-600 text-xl">📋</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-6 hover-scale">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600">คะแนนเฉลี่ยรวม</p>
+                        <p class="text-2xl font-bold text-green-600" id="averageScore">0.0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                        <span class="text-green-600 text-xl">⭐</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-6 hover-scale">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600">จำนวนพระสอนศีลธรรม</p>
+                        <p class="text-2xl font-bold text-rose-600" id="totalTeachers">0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-rose-100 rounded-lg flex items-center justify-center">
+                        <span class="text-rose-600 text-xl">👨‍🏫</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-6 hover-scale">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600">จำนวนสถานศึกษา</p>
+                        <p class="text-2xl font-bold text-purple-600" id="totalSchools">0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                        <span class="text-purple-600 text-xl">🏫</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-6 hover-scale">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">คะแนนเฉลี่ยรายภารกิจ</h3>
+                <canvas id="missionChart" width="400" height="300"></canvas>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-6 hover-scale">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">การกระจายคะแนน</h3>
+                <canvas id="distributionChart" width="400" height="300"></canvas>
+            </div>
+        </div>
+
+        <!-- Suggestions Summary -->
+        <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-6 mb-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">สรุปข้อเสนอแนะ</h3>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-green-50 rounded-lg p-4 border border-green-200">
+                    <h4 class="font-semibold text-green-800 mb-3 flex items-center">
+                        <span class="mr-2">✨</span>
+                        จุดเด่นที่พบบ่อย
+                    </h4>
+                    <div id="commonStrengths" class="text-sm text-green-700 space-y-1">
+                        <p class="text-gray-500 italic">ยังไม่มีข้อมูล</p>
+                    </div>
+                </div>
+                <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                    <h4 class="font-semibold text-blue-800 mb-3 flex items-center">
+                        <span class="mr-2">💡</span>
+                        ข้อเสนอแนะเพื่อพัฒนา
+                    </h4>
+                    <div id="commonImprovements" class="text-sm text-blue-700 space-y-1">
+                        <p class="text-gray-500 italic">ยังไม่มีข้อมูล</p>
+                    </div>
+                </div>
+                <div class="bg-purple-50 rounded-lg p-4 border border-purple-200">
+                    <h4 class="font-semibold text-purple-800 mb-3 flex items-center">
+                        <span class="mr-2">🤝</span>
+                        ความต้องการสนับสนุน
+                    </h4>
+                    <div id="commonSupport" class="text-sm text-purple-700 space-y-1">
+                        <p class="text-gray-500 italic">ยังไม่มีข้อมูล</p>
+                    </div>
+                </div>
+                <div class="bg-orange-50 rounded-lg p-4 border border-orange-200">
+                    <h4 class="font-semibold text-orange-800 mb-3 flex items-center">
+                        <span class="mr-2">💬</span>
+                        ข้อเสนอแนะอื่นๆ
+                    </h4>
+                    <div id="otherComments" class="text-sm text-orange-700 space-y-1">
+                        <p class="text-gray-500 italic">ยังไม่มีข้อมูล</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Export Buttons -->
+        <div class="bg-white rounded-xl shadow-sm border border-pink-100 p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">ส่งออกรายงาน</h3>
+            <div class="flex space-x-4">
+                <button onclick="exportToExcel()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2">
+                    <span>📊</span>
+                    <span>Export Excel</span>
+                </button>
+                <button onclick="exportToPDF()" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center space-x-2">
+                    <span>📄</span>
+                    <span>Export PDF</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mission data structure
+        const missions = [
+            {
+                name: "ร่วมวางแผนการสอนสาระการเรียนรู้พระพุทธศาสนา",
+                items: [
+                    "เข้าร่วมประชุมวางแผนการสอนกับครูสังคมศึกษา",
+                    "นำหลักสูตรแกนกลางการศึกษามาจัดทำแผนการสอน",
+                    "จัดทำแผนการสอนตามระดับชั้นและความสนใจของผู้เรียน"
+                ]
+            },
+            {
+                name: "ร่วมวางแผนและจัดกิจกรรมพัฒนาผู้เรียนด้านคุณธรรม ศีลธรรม",
+                items: [
+                    "จัดกิจกรรมอบรม/บรรยายด้านคุณธรรม จริยธรรม",
+                    "สอดแทรกมารยาทชาวพุทธในการจัดกิจกรรม",
+                    "ทำงานร่วมกับครูฝ่ายกิจกรรมเพื่อนำกิจกรรมไปสู่การปฏิบัติ"
+                ]
+            },
+            {
+                name: "จัดกิจกรรมติวนักเรียนให้พร้อมสอบธรรมศึกษา",
+                items: [
+                    "จัดตารางติวให้เหมาะสมกับนักเรียน",
+                    "ใช้สื่อการติว เช่น แบบฝึกหัด ข้อสอบเก่า หรือกิจกรรมกลุ่ม",
+                    "ประเมินความพร้อมนักเรียนก่อนเข้าสอบ"
+                ]
+            },
+            {
+                name: "ร่วมพัฒนาโรงเรียนวิถีพุทธกับสถานศึกษา",
+                items: [
+                    "ส่งเสริมการใช้หลักธรรมในกิจวัตรประจำวันของนักเรียน",
+                    "ร่วมกิจกรรมโรงเรียนวิถีพุทธ เช่น กิจกรรมวันสำคัญทางพระพุทธศาสนา",
+                    "ประสานงานกับผู้บริหารและครูในการพัฒนาแหล่งเรียนรู้"
+                ]
+            },
+            {
+                name: "ประสานการทำงานระหว่างคณะสงฆ์กับสถานศึกษา",
+                items: [
+                    "ติดต่อประสานงานระหว่างวัดและโรงเรียนเพื่อจัดกิจกรรมทางศาสนา",
+                    "เชิญวิทยากรพระสงฆ์/พระอาจารย์มาร่วมกิจกรรม",
+                    "สรุปผลการดำเนินความร่วมมือและนำเสนอผู้บริหาร"
+                ]
+            },
+            {
+                name: "รายงานผลการปฏิบัติงานและเสนอความคิดเห็น",
+                items: [
+                    "จัดทำรายงานผลการปฏิบัติงานประจำเดือนตามแบบฟอร์ม",
+                    "เสนอความคิดเห็นเพื่อปรับปรุงการทำงานแก่ผู้บริหารโครงการ",
+                    "ตรวจสอบความถูกต้องของข้อมูลก่อนส่งรายงาน"
+                ]
+            },
+            {
+                name: "ด้านคุณธรรม จริยธรรม และจรรยาบรรณ",
+                items: [
+                    "ปฏิบัติตนตามพระธรรมวินัยและจรรยาบรรณพระสอนศีลธรรม",
+                    "แสดงออกถึงความซื่อสัตย์ สุภาพ และเป็นแบบอย่างที่ดี",
+                    "รักษาความสัมพันธ์ที่ดีกับนักเรียน ครู และชุมชน"
+                ]
+            }
+        ];
+
+        let evaluationData = [];
+        let isFirebaseReady = false;
+
+        // Initialize Firebase App
+        window.initializeFirebaseApp = function() {
+            isFirebaseReady = true;
+            console.log('Firebase initialized successfully');
+            
+            // Update Firebase status indicator
+            const statusElement = document.getElementById('firebaseStatus');
+            if (statusElement) {
+                statusElement.innerHTML = `
+                    <span class="w-2 h-2 bg-green-500 rounded-full mr-1"></span>
+                    เชื่อมต่อ Firebase สำเร็จ
+                `;
+                
+                // Hide status after 3 seconds
+                setTimeout(() => {
+                    statusElement.style.display = 'none';
+                }, 3000);
+            }
+            
+            loadDataFromFirebase();
+        };
+
+        // Load data from Firebase
+        async function loadDataFromFirebase() {
+            if (!isFirebaseReady) return;
+            
+            try {
+                const { database, ref, get } = window.firebaseDB;
+                const evaluationsRef = ref(database, 'evaluations');
+                const snapshot = await get(evaluationsRef);
+                
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    evaluationData = Object.keys(data).map(key => ({
+                        firebaseKey: key,
+                        ...data[key]
+                    }));
+                    console.log('Data loaded from Firebase:', evaluationData.length, 'records');
+                } else {
+                    evaluationData = [];
+                    console.log('No data found in Firebase');
+                }
+                
+                updateDashboard();
+                updateAdminData();
+                updateEvaluationStats();
+            } catch (error) {
+                console.error('Error loading data from Firebase:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'เกิดข้อผิดพลาด',
+                    text: 'ไม่สามารถโหลดข้อมูลจาก Firebase ได้',
+                    confirmButtonColor: '#ec4899'
+                });
+            }
+        }
+
+        // Save data to Firebase
+        async function saveToFirebase(evaluation) {
+            if (!isFirebaseReady) {
+                console.error('Firebase not ready');
+                return false;
+            }
+            
+            try {
+                const { database, ref, push } = window.firebaseDB;
+                const evaluationsRef = ref(database, 'evaluations');
+                const newEvaluationRef = await push(evaluationsRef, evaluation);
+                console.log('Data saved to Firebase with key:', newEvaluationRef.key);
+                return newEvaluationRef.key;
+            } catch (error) {
+                console.error('Error saving to Firebase:', error);
+                throw error;
+            }
+        }
+
+        // Delete from Firebase
+        async function deleteFromFirebase(firebaseKey) {
+            if (!isFirebaseReady) return false;
+            
+            try {
+                const { database, ref, remove } = window.firebaseDB;
+                const evaluationRef = ref(database, `evaluations/${firebaseKey}`);
+                await remove(evaluationRef);
+                console.log('Data deleted from Firebase:', firebaseKey);
+                return true;
+            } catch (error) {
+                console.error('Error deleting from Firebase:', error);
+                throw error;
+            }
+        }
+
+        // Clear all data from Firebase
+        async function clearAllFirebaseData() {
+            if (!isFirebaseReady) return false;
+            
+            try {
+                const { database, ref, remove } = window.firebaseDB;
+                const evaluationsRef = ref(database, 'evaluations');
+                await remove(evaluationsRef);
+                console.log('All data cleared from Firebase');
+                return true;
+            } catch (error) {
+                console.error('Error clearing Firebase data:', error);
+                throw error;
+            }
+        }
+
+        // Initialize evaluation table
+        function initializeEvaluationTable() {
+            const tableContainer = document.getElementById('evaluationTable');
+            tableContainer.innerHTML = '';
+
+            missions.forEach((mission, missionIndex) => {
+                const missionDiv = document.createElement('div');
+                missionDiv.className = 'border border-gray-200 rounded-lg p-4 mb-4';
+                
+                let missionHTML = `
+                    <h4 class="text-md font-semibold text-gray-800 mb-4 bg-pink-50 p-3 rounded-lg">${missionIndex + 1}. ${mission.name}</h4>
+                    <div class="space-y-3">
+                `;
+
+                mission.items.forEach((item, itemIndex) => {
+                    missionHTML += `
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="text-sm text-gray-700 flex-1">${missionIndex + 1}.${itemIndex + 1} ${item}</span>
+                            <div class="flex space-x-2 ml-4">
+                                ${[1,2,3,4,5].map(score => `
+                                    <label class="flex items-center">
+                                        <input type="radio" name="score_${missionIndex}_${itemIndex}" value="${score}" class="sr-only">
+                                        <div class="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center cursor-pointer hover:border-pink-500 transition-colors score-radio" data-score="${score}">
+                                            <span class="text-xs font-medium text-gray-600">${score}</span>
+                                        </div>
+                                    </label>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                missionHTML += '</div>';
+                missionDiv.innerHTML = missionHTML;
+                tableContainer.appendChild(missionDiv);
+            });
+
+            // Add click handlers for radio buttons
+            document.querySelectorAll('.score-radio').forEach(radio => {
+                radio.addEventListener('click', function() {
+                    const name = this.closest('label').querySelector('input').name;
+                    const score = this.dataset.score;
+                    
+                    // Clear all selections for this question
+                    document.querySelectorAll(`input[name="${name}"]`).forEach(input => {
+                        input.checked = false;
+                        input.closest('label').querySelector('.score-radio').classList.remove('bg-pink-500', 'text-white', 'border-pink-500');
+                        input.closest('label').querySelector('.score-radio').classList.add('border-gray-300');
+                    });
+                    
+                    // Select this option
+                    const input = this.closest('label').querySelector('input');
+                    input.checked = true;
+                    this.classList.remove('border-gray-300');
+                    this.classList.add('bg-pink-500', 'text-white', 'border-pink-500');
+                });
+            });
+        }
+
+        // Submit evaluation
+        async function submitEvaluation() {
+            const evaluatorName = document.getElementById('evaluatorName').value;
+            const teacherName = document.getElementById('teacherName').value;
+            const schoolName = document.getElementById('schoolName').value;
+            const province = document.getElementById('province').value;
+            const semester = document.getElementById('semester').value;
+            const academicYear = document.getElementById('academicYear').value;
+            
+            // Get suggestions
+            const strengths = document.getElementById('strengths').value;
+            const improvements = document.getElementById('improvements').value;
+            const support = document.getElementById('support').value;
+            const otherSuggestions = document.getElementById('otherSuggestions').value;
+
+            if (!evaluatorName || !teacherName || !schoolName || !province || !semester || !academicYear) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'ข้อมูลไม่ครบถ้วน',
+                    text: 'กรุณากรอกข้อมูลให้ครบถ้วนทุกช่อง',
+                    confirmButtonColor: '#ec4899'
+                });
+                return;
+            }
+
+            const scores = [];
+            let totalQuestions = 0;
+            let answeredQuestions = 0;
+
+            missions.forEach((mission, missionIndex) => {
+                const missionScores = [];
+                mission.items.forEach((item, itemIndex) => {
+                    totalQuestions++;
+                    const selectedScore = document.querySelector(`input[name="score_${missionIndex}_${itemIndex}"]:checked`);
+                    if (selectedScore) {
+                        missionScores.push(parseInt(selectedScore.value));
+                        answeredQuestions++;
+                    } else {
+                        missionScores.push(0);
+                    }
+                });
+                scores.push(missionScores);
+            });
+
+            if (answeredQuestions < totalQuestions) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'การให้คะแนนไม่ครบถ้วน',
+                    text: `กรุณาให้คะแนนให้ครบทุกข้อ (ตอบแล้ว ${answeredQuestions}/${totalQuestions} ข้อ)`,
+                    confirmButtonColor: '#ec4899'
+                });
+                return;
+            }
+
+            // Show loading
+            Swal.fire({
+                title: 'กำลังบันทึกข้อมูล...',
+                text: 'กรุณารอสักครู่',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            // Simulate saving delay
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            const evaluation = {
+                id: Date.now(),
+                evaluatorName,
+                teacherName,
+                schoolName,
+                province,
+                semester,
+                academicYear,
+                scores,
+                suggestions: {
+                    strengths,
+                    improvements,
+                    support,
+                    otherSuggestions
+                },
+                date: new Date().toLocaleDateString('th-TH'),
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                // Save to Firebase
+                const firebaseKey = await saveToFirebase(evaluation);
+                evaluation.firebaseKey = firebaseKey;
+                
+                // Add to local array
+                evaluationData.push(evaluation);
+                
+                // Also save to localStorage as backup
+                localStorage.setItem('evaluationData', JSON.stringify(evaluationData));
+            } catch (error) {
+                console.error('Error saving evaluation:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'เกิดข้อผิดพลาดในการบันทึก',
+                    text: 'ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่อีกครั้ง',
+                    confirmButtonColor: '#ec4899'
+                });
+                return;
+            }
+
+            // Show success
+            Swal.fire({
+                icon: 'success',
+                title: 'บันทึกสำเร็จ!',
+                text: 'ข้อมูลการประเมินได้รับการบันทึกเรียบร้อยแล้ว',
+                confirmButtonColor: '#ec4899'
+            });
+            
+            // Reset form
+            document.querySelectorAll('input, select, textarea').forEach(input => {
+                if (input.type === 'radio') {
+                    input.checked = false;
+                    input.closest('label').querySelector('.score-radio').classList.remove('bg-pink-500', 'text-white', 'border-pink-500');
+                    input.closest('label').querySelector('.score-radio').classList.add('border-gray-300');
+                } else {
+                    input.value = '';
+                }
+            });
+
+            updateDashboard();
+            updateAdminData();
+            updateEvaluationStats();
+        }
+
+        // Show admin login
+        async function showAdminLogin() {
+            const { value: password } = await Swal.fire({
+                title: 'เข้าสู่ระบบผู้ดูแล',
+                input: 'password',
+                inputLabel: 'รหัสผ่าน',
+                inputPlaceholder: 'กรอกรหัสผ่าน',
+                inputAttributes: {
+                    maxlength: 10,
+                    autocapitalize: 'off',
+                    autocorrect: 'off'
+                },
+                confirmButtonColor: '#ec4899',
+                showCancelButton: true,
+                cancelButtonText: 'ยกเลิก'
+            });
+
+            if (password === '1234') {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'เข้าสู่ระบบสำเร็จ',
+                    text: 'ยินดีต้อนรับสู่หน้าผู้ดูแลระบบ',
+                    confirmButtonColor: '#ec4899'
+                });
+                showSection('admin');
+            } else if (password) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'รหัสผ่านไม่ถูกต้อง',
+                    text: 'กรุณาลองใหม่อีกครั้ง',
+                    confirmButtonColor: '#ec4899'
+                });
+            }
+        }
+
+        // Show section
+        function showSection(section) {
+            document.getElementById('evaluationSection').classList.toggle('hidden', section !== 'evaluation');
+            document.getElementById('dashboardSection').classList.toggle('hidden', section !== 'dashboard');
+            document.getElementById('adminSection').classList.toggle('hidden', section !== 'admin');
+            
+            // Update button states
+            document.getElementById('evalBtn').classList.toggle('text-pink-600', section === 'evaluation');
+            document.getElementById('evalBtn').classList.toggle('bg-pink-50', section === 'evaluation');
+            document.getElementById('evalBtn').classList.toggle('text-gray-600', section !== 'evaluation');
+            
+            document.getElementById('dashBtn').classList.toggle('text-pink-600', section === 'dashboard');
+            document.getElementById('dashBtn').classList.toggle('bg-pink-50', section === 'dashboard');
+            document.getElementById('dashBtn').classList.toggle('text-gray-600', section !== 'dashboard');
+
+            document.getElementById('adminBtn').classList.toggle('text-pink-600', section === 'admin');
+            document.getElementById('adminBtn').classList.toggle('bg-pink-50', section === 'admin');
+            document.getElementById('adminBtn').classList.toggle('text-gray-600', section !== 'admin');
+
+            if (section === 'dashboard') {
+                updateDashboard();
+            } else if (section === 'admin') {
+                updateAdminData();
+            }
+        }
+
+        // Update dashboard
+        function updateDashboard() {
+            const data = evaluationData;
+            
+            document.getElementById('totalEvaluations').textContent = data.length;
+            document.getElementById('totalTeachers').textContent = new Set(data.map(d => d.teacherName)).size;
+            document.getElementById('totalSchools').textContent = new Set(data.map(d => d.schoolName)).size;
+            
+            if (data.length > 0) {
+                const allScores = data.flatMap(d => d.scores.flat()).filter(s => s > 0);
+                const average = allScores.reduce((a, b) => a + b, 0) / allScores.length;
+                document.getElementById('averageScore').textContent = average.toFixed(1);
+            } else {
+                document.getElementById('averageScore').textContent = '0.0';
+            }
+
+            updateCharts(data);
+            updateSuggestionsSummary(data);
+            updateEvaluationStats();
+        }
+
+        // Update suggestions summary
+        function updateSuggestionsSummary(data) {
+            const strengthsContainer = document.getElementById('commonStrengths');
+            const improvementsContainer = document.getElementById('commonImprovements');
+            const supportContainer = document.getElementById('commonSupport');
+            const otherContainer = document.getElementById('otherComments');
+
+            if (data.length === 0) {
+                strengthsContainer.innerHTML = '<p class="text-gray-500 italic">ยังไม่มีข้อมูล</p>';
+                improvementsContainer.innerHTML = '<p class="text-gray-500 italic">ยังไม่มีข้อมูล</p>';
+                supportContainer.innerHTML = '<p class="text-gray-500 italic">ยังไม่มีข้อมูล</p>';
+                otherContainer.innerHTML = '<p class="text-gray-500 italic">ยังไม่มีข้อมูล</p>';
+                return;
+            }
+
+            // Get recent suggestions (last 5)
+            const recentData = data.slice(-5);
+
+            // Strengths
+            const strengths = recentData
+                .map(d => d.suggestions?.strengths)
+                .filter(s => s && s.trim())
+                .slice(-3);
+            
+            strengthsContainer.innerHTML = strengths.length > 0 
+                ? strengths.map(s => `<p class="bg-white rounded p-2 border border-green-300">• ${s}</p>`).join('')
+                : '<p class="text-gray-500 italic">ยังไม่มีข้อมูล</p>';
+
+            // Improvements
+            const improvements = recentData
+                .map(d => d.suggestions?.improvements)
+                .filter(s => s && s.trim())
+                .slice(-3);
+            
+            improvementsContainer.innerHTML = improvements.length > 0 
+                ? improvements.map(s => `<p class="bg-white rounded p-2 border border-blue-300">• ${s}</p>`).join('')
+                : '<p class="text-gray-500 italic">ยังไม่มีข้อมูล</p>';
+
+            // Support
+            const support = recentData
+                .map(d => d.suggestions?.support)
+                .filter(s => s && s.trim())
+                .slice(-3);
+            
+            supportContainer.innerHTML = support.length > 0 
+                ? support.map(s => `<p class="bg-white rounded p-2 border border-purple-300">• ${s}</p>`).join('')
+                : '<p class="text-gray-500 italic">ยังไม่มีข้อมูล</p>';
+
+            // Other suggestions
+            const others = recentData
+                .map(d => d.suggestions?.otherSuggestions)
+                .filter(s => s && s.trim())
+                .slice(-3);
+            
+            otherContainer.innerHTML = others.length > 0 
+                ? others.map(s => `<p class="bg-white rounded p-2 border border-orange-300">• ${s}</p>`).join('')
+                : '<p class="text-gray-500 italic">ยังไม่มีข้อมูล</p>';
+        }
+
+        // Update evaluation page statistics
+        function updateEvaluationStats() {
+            const data = evaluationData;
+            
+            document.getElementById('evalTotalEvaluations').textContent = data.length;
+            document.getElementById('evalTotalTeachers').textContent = new Set(data.map(d => d.teacherName)).size;
+            document.getElementById('evalTotalSchools').textContent = new Set(data.map(d => d.schoolName)).size;
+            
+            if (data.length > 0) {
+                const allScores = data.flatMap(d => d.scores.flat()).filter(s => s > 0);
+                const average = allScores.reduce((a, b) => a + b, 0) / allScores.length;
+                document.getElementById('evalAverageScore').textContent = average.toFixed(1);
+            } else {
+                document.getElementById('evalAverageScore').textContent = '0.0';
+            }
+        }
+
+        // Update admin data
+        function updateAdminData() {
+            const data = evaluationData;
+            
+            // Update admin stats
+            document.getElementById('adminTotalEvaluations').textContent = data.length;
+            document.getElementById('adminTotalTeachers').textContent = new Set(data.map(d => d.teacherName)).size;
+            document.getElementById('adminTotalSchools').textContent = new Set(data.map(d => d.schoolName)).size;
+            document.getElementById('dataCount').textContent = data.length;
+            
+            // Update admin table
+            const tableBody = document.getElementById('adminTableBody');
+            tableBody.innerHTML = '';
+            
+            data.forEach((evaluation, index) => {
+                const allScores = evaluation.scores.flat().filter(s => s > 0);
+                const average = allScores.length > 0 ? (allScores.reduce((a, b) => a + b, 0) / allScores.length).toFixed(1) : '0.0';
+                
+                const row = document.createElement('tr');
+                row.className = 'border-b hover:bg-gray-50';
+                row.innerHTML = `
+                    <td class="px-4 py-2">${index + 1}</td>
+                    <td class="px-4 py-2">${evaluation.evaluatorName || '-'}</td>
+                    <td class="px-4 py-2">${evaluation.teacherName}</td>
+                    <td class="px-4 py-2">${evaluation.schoolName}</td>
+                    <td class="px-4 py-2">${evaluation.province}</td>
+                    <td class="px-4 py-2">ภาคเรียนที่ ${evaluation.semester}</td>
+                    <td class="px-4 py-2">${evaluation.academicYear}</td>
+                    <td class="px-4 py-2">${average}</td>
+                    <td class="px-4 py-2">${evaluation.date}</td>
+                    <td class="px-4 py-2">
+                        <button onclick="deleteEvaluation(${evaluation.id})" class="bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600">
+                            ลบ
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Delete single evaluation
+        async function deleteEvaluation(id) {
+            const result = await Swal.fire({
+                title: 'ยืนยันการลบ',
+                text: 'คุณต้องการลบข้อมูลการประเมินนี้หรือไม่?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'ลบ',
+                cancelButtonText: 'ยกเลิก'
+            });
+
+            if (result.isConfirmed) {
+                try {
+                    // Find the evaluation to get Firebase key
+                    const evaluation = evaluationData.find(item => item.id === id);
+                    
+                    if (evaluation && evaluation.firebaseKey) {
+                        // Delete from Firebase
+                        await deleteFromFirebase(evaluation.firebaseKey);
+                    }
+                    
+                    // Remove from local array
+                    evaluationData = evaluationData.filter(item => item.id !== id);
+                    localStorage.setItem('evaluationData', JSON.stringify(evaluationData));
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'ลบสำเร็จ',
+                        text: 'ข้อมูลได้รับการลบเรียบร้อยแล้ว',
+                        confirmButtonColor: '#ec4899'
+                    });
+                    
+                    updateAdminData();
+                    updateDashboard();
+                    updateEvaluationStats();
+                } catch (error) {
+                    console.error('Error deleting evaluation:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'เกิดข้อผิดพลาด',
+                        text: 'ไม่สามารถลบข้อมูลได้ กรุณาลองใหม่อีกครั้ง',
+                        confirmButtonColor: '#ec4899'
+                    });
+                }
+            }
+        }
+
+        // Clear all data
+        async function clearAllData() {
+            const result = await Swal.fire({
+                title: 'ยืนยันการลบทั้งหมด',
+                text: 'คุณต้องการลบข้อมูลการประเมินทั้งหมดหรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'ลบทั้งหมด',
+                cancelButtonText: 'ยกเลิก'
+            });
+
+            if (result.isConfirmed) {
+                try {
+                    // Show loading
+                    Swal.fire({
+                        title: 'กำลังลบข้อมูล...',
+                        text: 'กรุณารอสักครู่',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    // Clear from Firebase
+                    await clearAllFirebaseData();
+                    
+                    // Clear local data
+                    evaluationData = [];
+                    localStorage.setItem('evaluationData', JSON.stringify(evaluationData));
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'ลบสำเร็จ',
+                        text: 'ข้อมูลทั้งหมดได้รับการลบเรียบร้อยแล้ว',
+                        confirmButtonColor: '#ec4899'
+                    });
+                    
+                    updateAdminData();
+                    updateDashboard();
+                    updateEvaluationStats();
+                } catch (error) {
+                    console.error('Error clearing all data:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'เกิดข้อผิดพลาด',
+                        text: 'ไม่สามารถลบข้อมูลทั้งหมดได้ กรุณาลองใหม่อีกครั้ง',
+                        confirmButtonColor: '#ec4899'
+                    });
+                }
+            }
+        }
+
+        // Refresh admin data
+        async function refreshAdminData() {
+            try {
+                Swal.fire({
+                    title: 'กำลังโหลดข้อมูล...',
+                    text: 'กรุณารอสักครู่',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                await loadDataFromFirebase();
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'รีเฟรชสำเร็จ',
+                    text: `ข้อมูลได้รับการอัปเดตแล้ว (${evaluationData.length} รายการ)`,
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            } catch (error) {
+                console.error('Error refreshing data:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'เกิดข้อผิดพลาด',
+                    text: 'ไม่สามารถรีเฟรชข้อมูลได้',
+                    confirmButtonColor: '#ec4899'
+                });
+            }
+        }
+
+        // Update charts
+        function updateCharts(data) {
+            // Clear existing charts
+            const ctx1 = document.getElementById('missionChart');
+            const ctx2 = document.getElementById('distributionChart');
+            
+            if (Chart.getChart(ctx1)) Chart.getChart(ctx1).destroy();
+            if (Chart.getChart(ctx2)) Chart.getChart(ctx2).destroy();
+            
+            if (data.length === 0) return;
+
+            // Mission average scores
+            const missionAverages = missions.map((mission, index) => {
+                const missionScores = data.flatMap(d => d.scores[index]).filter(s => s > 0);
+                return missionScores.length > 0 ? missionScores.reduce((a, b) => a + b, 0) / missionScores.length : 0;
+            });
+
+            new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: missions.map((m, i) => `ภารกิจ ${i + 1}`),
+                    datasets: [{
+                        label: 'คะแนนเฉลี่ย',
+                        data: missionAverages,
+                        backgroundColor: 'rgba(236, 72, 153, 0.8)',
+                        borderColor: 'rgba(236, 72, 153, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 5
+                        }
+                    }
+                }
+            });
+
+            // Score distribution
+            const allScores = data.flatMap(d => d.scores.flat()).filter(s => s > 0);
+            const distribution = [1,2,3,4,5].map(score => allScores.filter(s => s === score).length);
+
+            new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['1 คะแนน', '2 คะแนน', '3 คะแนน', '4 คะแนน', '5 คะแนน'],
+                    datasets: [{
+                        data: distribution,
+                        backgroundColor: [
+                            'rgba(239, 68, 68, 0.8)',
+                            'rgba(245, 158, 11, 0.8)',
+                            'rgba(234, 179, 8, 0.8)',
+                            'rgba(236, 72, 153, 0.8)',
+                            'rgba(34, 197, 94, 0.8)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true
+                }
+            });
+        }
+
+        // Apply filters
+        function applyFilters() {
+            const filterProvince = document.getElementById('filterProvince').value;
+            const filterSemester = document.getElementById('filterSemester').value;
+            const filterYear = document.getElementById('filterYear').value;
+            
+            let filteredData = evaluationData;
+            
+            if (filterProvince) {
+                filteredData = filteredData.filter(d => d.province === filterProvince);
+            }
+            
+            if (filterSemester) {
+                filteredData = filteredData.filter(d => d.semester === filterSemester);
+            }
+            
+            if (filterYear) {
+                filteredData = filteredData.filter(d => d.academicYear === filterYear);
+            }
+            
+            // Update dashboard with filtered data
+            document.getElementById('totalEvaluations').textContent = filteredData.length;
+            document.getElementById('totalTeachers').textContent = new Set(filteredData.map(d => d.teacherName)).size;
+            document.getElementById('totalSchools').textContent = new Set(filteredData.map(d => d.schoolName)).size;
+            
+            if (filteredData.length > 0) {
+                const allScores = filteredData.flatMap(d => d.scores.flat()).filter(s => s > 0);
+                const average = allScores.reduce((a, b) => a + b, 0) / allScores.length;
+                document.getElementById('averageScore').textContent = average.toFixed(1);
+            } else {
+                document.getElementById('averageScore').textContent = '0.0';
+            }
+            
+            updateCharts(filteredData);
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'กรองข้อมูลสำเร็จ',
+                text: `พบข้อมูล ${filteredData.length} รายการ`,
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }
+
+        // Export functions
+        function exportToExcel() {
+            if (evaluationData.length === 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'ไม่มีข้อมูล',
+                    text: 'ไม่มีข้อมูลสำหรับส่งออก',
+                    confirmButtonColor: '#ec4899'
+                });
+                return;
+            }
+            
+            Swal.fire({
+                icon: 'info',
+                title: 'กำลังพัฒนา',
+                text: 'ฟีเจอร์ Export Excel จะพัฒนาในเวอร์ชันถัดไป',
+                confirmButtonColor: '#ec4899'
+            });
+        }
+
+        function exportToPDF() {
+            if (evaluationData.length === 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'ไม่มีข้อมูล',
+                    text: 'ไม่มีข้อมูลสำหรับส่งออก',
+                    confirmButtonColor: '#ec4899'
+                });
+                return;
+            }
+            
+            Swal.fire({
+                icon: 'info',
+                title: 'กำลังพัฒนา',
+                text: 'ฟีเจอร์ Export PDF จะพัฒนาในเวอร์ชันถัดไป',
+                confirmButtonColor: '#ec4899'
+            });
+        }
+
+        // Toggle suggestions view in admin
+        function toggleSuggestionsView() {
+            const view = document.getElementById('suggestionsDetailView');
+            const btn = document.getElementById('toggleSuggestionsBtn');
+            
+            if (view.classList.contains('hidden')) {
+                view.classList.remove('hidden');
+                btn.textContent = '📝 ซ่อนข้อเสนอแนะ';
+                updateDetailedSuggestions();
+            } else {
+                view.classList.add('hidden');
+                btn.textContent = '📝 แสดงข้อเสนอแนะ';
+            }
+        }
+
+        // Update detailed suggestions
+        function updateDetailedSuggestions() {
+            const container = document.getElementById('suggestionsContainer');
+            const data = evaluationData.filter(d => d.suggestions && 
+                (d.suggestions.strengths || d.suggestions.improvements || d.suggestions.support || d.suggestions.otherSuggestions));
+
+            if (data.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 italic text-center py-8">ยังไม่มีข้อเสนอแนะ</p>';
+                return;
+            }
+
+            container.innerHTML = data.map((evaluation, index) => `
+                <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <h4 class="font-semibold text-gray-800">${evaluation.teacherName}</h4>
+                            <p class="text-sm text-gray-600">${evaluation.schoolName} - ${evaluation.province}</p>
+                            <p class="text-xs text-gray-500">วันที่ประเมิน: ${evaluation.date}</p>
+                        </div>
+                        <span class="text-xs bg-pink-100 text-pink-800 px-2 py-1 rounded">#${index + 1}</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        ${evaluation.suggestions.strengths ? `
+                            <div class="bg-green-50 rounded-lg p-3 border border-green-200">
+                                <h5 class="font-medium text-green-800 mb-2 flex items-center">
+                                    <span class="mr-1">✨</span> จุดเด่น
+                                </h5>
+                                <p class="text-sm text-green-700">${evaluation.suggestions.strengths}</p>
+                            </div>
+                        ` : ''}
+                        
+                        ${evaluation.suggestions.improvements ? `
+                            <div class="bg-blue-50 rounded-lg p-3 border border-blue-200">
+                                <h5 class="font-medium text-blue-800 mb-2 flex items-center">
+                                    <span class="mr-1">💡</span> ข้อเสนอแนะเพื่อพัฒนา
+                                </h5>
+                                <p class="text-sm text-blue-700">${evaluation.suggestions.improvements}</p>
+                            </div>
+                        ` : ''}
+                        
+                        ${evaluation.suggestions.support ? `
+                            <div class="bg-purple-50 rounded-lg p-3 border border-purple-200">
+                                <h5 class="font-medium text-purple-800 mb-2 flex items-center">
+                                    <span class="mr-1">🤝</span> ความต้องการสนับสนุน
+                                </h5>
+                                <p class="text-sm text-purple-700">${evaluation.suggestions.support}</p>
+                            </div>
+                        ` : ''}
+                        
+                        ${evaluation.suggestions.otherSuggestions ? `
+                            <div class="bg-orange-50 rounded-lg p-3 border border-orange-200">
+                                <h5 class="font-medium text-orange-800 mb-2 flex items-center">
+                                    <span class="mr-1">💬</span> ข้อเสนอแนะอื่นๆ
+                                </h5>
+                                <p class="text-sm text-orange-700">${evaluation.suggestions.otherSuggestions}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeEvaluationTable();
+            
+            // Check if Firebase is ready, if not wait for it
+            if (isFirebaseReady) {
+                loadDataFromFirebase();
+            } else {
+                // Firebase will call loadDataFromFirebase when ready
+                console.log('Waiting for Firebase to initialize...');
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97c4d4d6158ca1c3',t:'MTc1NzQwMTQ2NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
